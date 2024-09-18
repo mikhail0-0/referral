@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>!DOCTYPE</title>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <form id="register_form">
+      <label for="name">ФИО</label>
+      <input name="name" id="name" type="text" />
+
+      <label for="phone_number">Номер Телефона</label>
+      <input name="phone_number" id="phone_number" type="text" />
+
+      <label for="email">Email</label>
+      <input name="email" id="email" type="text" />
+
+      <label for="password">Пароль</label>
+      <input name="password" id="password" type="text" />
+
+      <input name="referrer_id" id="referrer_id" type="hidden" />
+
+      <button type="submit">Зарегистрироваться</button>
+    </form>
+  </body>
+  <script>
+    const form = document.getElementById("register_form");
+
+    form.onsubmit = async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData(form);
+
+      const params = new URL(document.URL).searchParams;
+      formData.set("referrer_id", params.get("referrerId"));
+
+      const obj = Object.fromEntries(formData);
+      const json = JSON.stringify(obj);
+      const res = await fetch("/students", {
+        method: "POST",
+        body: json,
+        headers: {
+          "Content-type": "application/json; charset=UTF-8",
+        },
+      });
+      if (res.ok) {
+        alert("Регистрация прошла успешно!");
+      } else {
+        const errors = await res.json();
+        alert(JSON.stringify(errors));
+      }
+    };
+  </script>
+</html>
